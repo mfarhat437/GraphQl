@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  graphql-task:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: graphql-task
+    ports:
+      - 3000:3000
+    container_name: graphql
+    restart: unless-stopped
+    environment:
+      VIRTUAL_HOST: ${HOST}
+      VIRTUAL_PORT: 3000
+      LETSENCRYPT_HOST: ${HOST}
+      LETSENCRYPT_EMAIL: mfarhat437@gmail.com
+networks:
+  default:
+    external:
+      name: nginx-proxy
+

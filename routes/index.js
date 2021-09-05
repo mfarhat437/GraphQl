@@ -8,7 +8,6 @@ const schemaDir = '../schema/src';
 const {graphqlHTTP} = require('express-graphql')
 const {GraphQLSchema, GraphQLObjectType} = require("graphql");
 
-// const d= require('../../')
 class Router {
     constructor(app, config) {
         this.app = app;
@@ -30,7 +29,6 @@ class Router {
 
         this.app.use(hooks);
         this.app.use(language);
-        this.initDocs();
         let rootQuery = {name: "RootQuery"};
         let rootMutation = {name: "RootMutation"};
         const dir = path.join(__dirname, schemaDir);
@@ -39,9 +37,11 @@ class Router {
         this.app.use('/graphql', graphqlHTTP({
                 graphiql: true,
                 schema: this.schema,
-                formatError(err) {
-                    if (!err.originalError)
+            customFormatErrorFn(err) {
+                    if (!err.originalError){
                         return err
+                    }
+                    console.log('errrr : ',err)
                     const data = err.originalError.data
                     const message = err.message || 'error occurred';
                     const code = err.originalError.code || 500
@@ -70,22 +70,7 @@ class Router {
         return schema
     }
 
-    injectControllers(controllers) {
-        for (let i = 0; i < controllers.length; i++) {
-            this.app.use(controllers[i].url, controllers[i].router);
-        }
-    }
 
-    initDocs() {
-        if (utils.inDevelopment()) {
-            const files = path.join(__dirname, '../docs/swagger-ui');
-            const pu = path.join(__dirname, '../public');
-            const oaSpecs = path.join(__dirname, '../api.yaml');
-            this.app.use('/swagger-ui', express.static(files));
-            this.app.use('/swagger-ui/api.yaml', express.static(oaSpecs));
-            this.app.use('/pu/', express.static(pu));
-        }
-    }
 
 
 }

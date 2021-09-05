@@ -65,9 +65,6 @@ class UserService extends BaseService {
         return
     }
 
-    async getUserById(userId) {
-
-    }
 }
 
 module.exports = new UserService()
